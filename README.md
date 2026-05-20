@@ -370,7 +370,7 @@ This project is private and proprietary. All rights reserved.
 
 ## 📞 Support
 
-For support, email support@homeserviceai.com or contact through the in-app About section.
+For support, email mehdhathafeez@gmail.com ...
 
 ## 🙏 Acknowledgments
 
