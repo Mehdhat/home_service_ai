@@ -13,7 +13,6 @@ Home Service AI is a comprehensive Flutter application that connects service see
 - **Real-Time Bookings**: Live booking system with real-time notifications and status updates
 - **Multi-Category Support**: 17+ service categories including Electrician, Plumber, AC Technician, Carpenter, and more
 - **Rating & Review System**: Comprehensive feedback system for both seekers and providers
-- **Earnings Dashboard**: Financial overview for service providers
 - **Client Management**: Track and manage customer relationships
 - **Email Verification**: Secure authentication with email verification
 - **Responsive Design**: Optimized for both mobile and desktop platforms
@@ -177,7 +176,6 @@ home_service_ai/
 **Dashboard Features:**
 - **Overview**: Real-time emergency match alerts and booking notifications
 - **Manage Bookings**: Accept, confirm, and complete service requests
-- **Earnings**: Financial overview with total balance and transaction history
 - **Clients**: Customer relationship management
 - **Reviews**: View customer feedback and ratings
 - **Profile**: Manage professional profile, skills, hourly rate, and availability
