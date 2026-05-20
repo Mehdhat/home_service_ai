@@ -1,0 +1,95 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // 🛡️ Helper Functions
+    // ==========================================
+
+    // Checks if the request is made by an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Checks if the authenticated user matches the target document owner
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ==========================================
+    // 👥 User Profiles Collection
+    // ==========================================
+    match /users/{userId} {
+      
+      // Allow any logged-in Seeker or Provider to view profiles
+      allow read: if isAuthenticated();
+
+      // Allow users to initialize their own user document during Sign Up
+      allow create: if isOwner(userId) 
+        && request.resource.data.role in ['seeker', 'provider'];
+
+      // Allow users to update their own profile, protecting role changes
+      allow update: if isOwner(userId)
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email', 'createdAt']))
+        && request.resource.data.role in ['seeker', 'provider'];
+
+      // Prevent client-side user document deletions to preserve transactions
+      allow delete: if false;
+
+      // ==========================================
+      // 🔔 Provider/Seeker Notifications Subcollection
+      // ==========================================
+      match /notifications/{notificationId} {
+        
+        // Users can read and manage their own alerts
+        allow read, update, delete: if isOwner(userId) || (isAuthenticated() && request.auth.uid == resource.data.seekerId);
+        
+        // Any authenticated seeker or provider can trigger/create an alert for the other
+        allow create: if isAuthenticated();
+      }
+    }
+
+    // ==========================================
+    // 📅 Bookings Collection (Global Transactions)
+    // ==========================================
+    match /bookings/{bookingId} {
+      
+      // Seekers and Providers can read participant bookings, or Completed bookings for public statistics
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.seekerId || 
+        request.auth.uid == resource.data.providerId ||
+        resource.data.status == 'Completed'
+      );
+
+      // Any authenticated seeker can initiate/create a booking
+      allow create: if isAuthenticated() 
+        && request.resource.data.seekerId == request.auth.uid;
+
+      // Seekers and Providers can update booking status (e.g. Confirm / Complete)
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.seekerId || 
+        request.auth.uid == resource.data.providerId
+      );
+
+      // Prevent hard deletion of transactional histories client-side
+      allow delete: if false;
+    }
+
+    // ==========================================
+    // ⭐️ Reviews Collection (Global Public Feedbacks)
+    // ==========================================
+    match /reviews/{reviewId} {
+      
+      // Anyone logged in can read public ratings & reviews
+      allow read: if isAuthenticated();
+
+      // Only the seeker participant who ordered the service can publish the review
+      allow create: if isAuthenticated() 
+        && request.resource.data.seekerId == request.auth.uid;
+
+      // Reviews are immutable once written to prevent rating fraud client-side
+      allow update, delete: if false;
+    }
+  }
+}
