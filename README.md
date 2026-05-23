@@ -4,7 +4,7 @@ An AI-powered platform bridging service providers and seekers in the informal ec
 
 ## 🌟 Overview
 
-Home Service AI is a comprehensive Flutter application that connects service seekers with skilled service providers using AI-powered matching algorithms. The platform supports multiple service categories and provides real-time booking, ratings, and earnings management features.
+Home Service AI is a comprehensive Flutter application that connects service seekers with skilled service providers using AI-powered matching algorithms. The platform supports multiple service categories and provides real-time booking, ratings,  management features.
 
 ### Key Features
 
